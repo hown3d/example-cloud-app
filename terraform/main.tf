@@ -25,3 +25,7 @@ output "vault_username" {
   value = stackit_secretsmanager_user.this.username
 }
 
+output "dns_zone" {
+  value = stackit_dns_zone.this.dns_name
+}
+

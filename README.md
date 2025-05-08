@@ -56,7 +56,7 @@ Follow these steps to deploy the application:
     After the Terraform deployment is complete, configure `kubectl` to connect to your newly created Kubernetes cluster.  The Terraform output will provide the necessary `kubeconfig` information.  You can typically configure `kubectl` using the following command (replace `<path_to_kubeconfig>` with the actual path):
 
     ```bash
-    stackit -p ${YOUR_PROJECT_ID} ske kubeconfig create ${CLUSTER_NAME}
+    stackit -p ${YOUR_PROJECT_ID} ske kubeconfig create ${CLUSTER_NAME} --login
     export KUBECONFIG=<path_to_kubeconfig>
     kubectl get nodes
     ```
@@ -65,11 +65,13 @@ Follow these steps to deploy the application:
 
 4. **Deploy the application to Kubernetes:**
 
-    * Navigate to the `kubernetes` directory.
+    * Navigate to the `app` directory.
+    * Change the ClusterSecretStore resource in `secretstore.yaml` to use the `vault_id` (spec.provider.vault.path) and `vault_username` (spec.provider.vault.auth.userPass.username) output from terraform.
+    * Point the external-dns annotation `external-dns.alpha.kubernetes.io/hostname` on the LoadBalancer service in `svc.yaml` to your DNS zone. The zone is also shown in the terraform output under the key `dns_zone`.
     * Apply the Kubernetes manifests:
 
     ```bash
-    cd ../kubernetes
+    cd ../app
     kubectl apply -f .
     ```
 
@@ -83,7 +85,7 @@ Follow these steps to deploy the application:
     kubectl get service notebook -o wide
     ```
 
-    * Access the application in your web browser using the external IP address or hostname of the loadbalancer.
+    * Access the application on **port 8080** in your web browser using the external IP address or hostname of the loadbalancer.
 
 ## Cleaning Up
 
