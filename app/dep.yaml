@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notebook
+  namespace: default
+  labels:
+    app: notebook
+spec:
+  selector:
+    matchLabels:
+      app: notebook
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: notebook
+    spec:
+      containers:
+        - name: notebook
+          image: ttl.sh/example/cloud-app
+          env:
+            - name: DB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: db
+                  key: db_uri
+          ports:
+            - containerPort: 8080
+              name: http
